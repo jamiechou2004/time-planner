@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>时间规划</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand" aria-label="时间规划">
+          <span class="brand-mark">⌘</span>
+          <span data-i18n="appName">时间规划</span>
+        </div>
+        <nav class="nav" aria-label="主导航">
+          <a href="#today" data-i18n="navToday">今日</a>
+          <a href="#timeline" data-i18n="navTimeline">时间轴</a>
+          <a href="#focus" data-i18n="navFocus">专注</a>
+        </nav>
+        <div class="top-actions">
+          <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language">EN</button>
+          <button class="ghost-button" id="themeToggle" type="button" aria-label="切换深浅色">
+            <span class="icon">◐</span>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" id="today">
+          <div class="hero-copy">
+            <p class="eyebrow" id="dateText">今天</p>
+            <h1 data-i18n="heroTitle">把一天安排得更清楚。</h1>
+            <p class="hero-text" data-i18n="heroText">
+              用简洁的时间块、优先级和专注计时，把任务从脑子里移到清晰的计划里。
+            </p>
+            <div class="hero-actions">
+              <button class="primary-button" id="quickPlanButton" type="button">
+                <span class="icon">＋</span>
+                <span data-i18n="quickPlan">快速安排</span>
+              </button>
+              <button class="secondary-button" id="clearDoneButton" type="button">
+                <span data-i18n="clearDone">清理完成</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="day-panel" aria-label="今日概览">
+            <div class="orbital-clock">
+              <div class="clock-ring">
+                <span class="clock-time" id="clockTime">09:41</span>
+                <span class="clock-label" data-i18n="currentTime">当前时间</span>
+              </div>
+            </div>
+            <div class="progress-copy">
+              <span data-i18n="todayProgress">今日进度</span>
+              <strong id="progressText">0%</strong>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <span id="progressFill"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="stats-grid" aria-label="今日统计">
+          <article class="stat-card">
+            <span data-i18n="plannedTasks">计划任务</span>
+            <strong id="totalTasks">0</strong>
+          </article>
+          <article class="stat-card">
+            <span data-i18n="completed">已完成</span>
+            <strong id="doneTasks">0</strong>
+          </article>
+          <article class="stat-card">
+            <span data-i18n="plannedTime">计划时长</span>
+            <strong id="totalHours">0h</strong>
+          </article>
+          <article class="stat-card">
+            <span data-i18n="topPriority">最高优先级</span>
+            <strong id="topPriority">无</strong>
+          </article>
+        </section>
+
+        <section class="workspace">
+          <div class="planner-panel" id="planner">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Planner</p>
+                <h2 data-i18n="addBlock">新增时间块</h2>
+              </div>
+              <button class="icon-button" id="sampleButton" type="button" aria-label="填入示例">
+                ✦
+              </button>
+            </div>
+
+            <form class="planner-form" id="plannerForm">
+              <label>
+                <span data-i18n="taskLabel">任务</span>
+                <input id="taskTitle" type="text" placeholder="例如：整理产品方案" required />
+              </label>
+              <div class="form-row">
+                <label>
+                  <span data-i18n="startLabel">开始</span>
+                  <input id="taskStart" type="time" value="09:00" required />
+                </label>
+                <label>
+                  <span data-i18n="endLabel">结束</span>
+                  <input id="taskEnd" type="time" value="10:30" required />
+                </label>
+              </div>
+              <label>
+                <span data-i18n="priorityLabel">优先级</span>
+                <select id="taskPriority">
+                  <option value="high" data-i18n="priorityHigh">高</option>
+                  <option value="medium" selected data-i18n="priorityMedium">中</option>
+                  <option value="low" data-i18n="priorityLow">低</option>
+                </select>
+              </label>
+              <button class="primary-button full" type="submit" data-i18n="addToPlan">加入今日计划</button>
+            </form>
+          </div>
+
+          <div class="timeline-panel" id="timeline">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Timeline</p>
+                <h2 data-i18n="todayTimeline">今日时间轴</h2>
+              </div>
+              <span class="pill" id="taskCountPill">0 项</span>
+            </div>
+            <div class="timeline-list" id="timelineList"></div>
+          </div>
+
+          <aside class="focus-panel" id="focus">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Focus</p>
+                <h2 data-i18n="focusTimer">专注计时</h2>
+              </div>
+            </div>
+            <div class="timer">
+              <span id="timerText">25:00</span>
+            </div>
+            <div class="timer-controls">
+              <button class="secondary-button" id="timerToggle" type="button" data-i18n="startTimer">开始</button>
+              <button class="ghost-button" id="timerReset" type="button" data-i18n="resetTimer">重置</button>
+            </div>
+            <div class="focus-modes" aria-label="专注模式">
+              <button class="mode is-active" data-minutes="25" type="button">25</button>
+              <button class="mode" data-minutes="45" type="button">45</button>
+              <button class="mode" data-minutes="60" type="button">60</button>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
