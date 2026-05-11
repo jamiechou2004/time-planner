@@ -1,5 +1,6 @@
 const storageKey = "apple-time-planner.tasks";
 const languageKey = "apple-time-planner.language";
+const priorityRulesKey = "apple-time-planner.priority-rules";
 
 const translations = {
   zh: {
@@ -27,6 +28,11 @@ const translations = {
     priorityMedium: "中",
     priorityLow: "低",
     priorityNone: "无",
+    priorityRules: "优先级定义",
+    priorityRulesHint: "给高、中、低写下你自己的判断标准。",
+    priorityRuleHighPlaceholder: "例如：今天必须完成，影响核心结果",
+    priorityRuleMediumPlaceholder: "例如：重要但可以安排到合适时段",
+    priorityRuleLowPlaceholder: "例如：有时间再处理，不影响主线",
     addToPlan: "加入今日计划",
     todayTimeline: "今日时间轴",
     focusTimer: "专注计时",
@@ -76,6 +82,11 @@ const translations = {
     priorityMedium: "Medium",
     priorityLow: "Low",
     priorityNone: "None",
+    priorityRules: "Priority Rules",
+    priorityRulesHint: "Define what high, medium, and low mean for your day.",
+    priorityRuleHighPlaceholder: "Example: must be done today and affects the main result",
+    priorityRuleMediumPlaceholder: "Example: important, but can fit into the right slot",
+    priorityRuleLowPlaceholder: "Example: optional when time is available",
     addToPlan: "Add to Today's Plan",
     todayTimeline: "Today's Timeline",
     focusTimer: "Focus Timer",
@@ -120,6 +131,7 @@ const defaultTaskTemplate = [
 
 let currentLanguage = localStorage.getItem(languageKey) === "en" ? "en" : "zh";
 let tasks = loadTasks();
+let priorityRules = loadPriorityRules();
 let timerMinutes = 25;
 let timerRemaining = timerMinutes * 60;
 let timerTotal = timerRemaining;
@@ -143,6 +155,11 @@ const timerReset = document.querySelector("#timerReset");
 const langToggle = document.querySelector("#langToggle");
 const customTimerForm = document.querySelector("#customTimerForm");
 const customTimerMinutes = document.querySelector("#customTimerMinutes");
+const priorityRuleInputs = {
+  high: document.querySelector("#priorityRuleHigh"),
+  medium: document.querySelector("#priorityRuleMedium"),
+  low: document.querySelector("#priorityRuleLow")
+};
 
 function text(key) {
   return translations[currentLanguage][key];
@@ -174,6 +191,26 @@ function loadTasks() {
   } catch {
     return createDefaultTasks();
   }
+}
+
+function loadPriorityRules() {
+  const saved = localStorage.getItem(priorityRulesKey);
+  if (!saved) return { high: "", medium: "", low: "" };
+
+  try {
+    const parsed = JSON.parse(saved);
+    return {
+      high: typeof parsed.high === "string" ? parsed.high : "",
+      medium: typeof parsed.medium === "string" ? parsed.medium : "",
+      low: typeof parsed.low === "string" ? parsed.low : ""
+    };
+  } catch {
+    return { high: "", medium: "", low: "" };
+  }
+}
+
+function savePriorityRules() {
+  localStorage.setItem(priorityRulesKey, JSON.stringify(priorityRules));
 }
 
 function saveTasks() {
@@ -223,6 +260,7 @@ function renderTasks() {
         <span class="task-title">${escapeHtml(task.title)}</span>
         <div class="timeline-meta">
           <span class="priority ${priorityClass(task.priority)}">${priorityLabel(task.priority)}</span>
+          ${priorityRules[task.priority] ? `<span>${escapeHtml(priorityRules[task.priority])}</span>` : ""}
           <span>${durationLabel(task.start, task.end)}</span>
         </div>
       </div>
@@ -319,6 +357,12 @@ function applyLanguage() {
   });
 
   document.querySelector("#taskTitle").placeholder = dictionary.taskPlaceholder;
+  priorityRuleInputs.high.placeholder = dictionary.priorityRuleHighPlaceholder;
+  priorityRuleInputs.medium.placeholder = dictionary.priorityRuleMediumPlaceholder;
+  priorityRuleInputs.low.placeholder = dictionary.priorityRuleLowPlaceholder;
+  priorityRuleInputs.high.value = priorityRules.high;
+  priorityRuleInputs.medium.value = priorityRules.medium;
+  priorityRuleInputs.low.value = priorityRules.low;
   timerToggle.textContent = timerId ? dictionary.pauseTimer : dictionary.startTimer;
   timerReset.textContent = dictionary.resetTimer;
   updateClock();
@@ -388,6 +432,14 @@ langToggle.addEventListener("click", () => {
   currentLanguage = currentLanguage === "zh" ? "en" : "zh";
   localStorage.setItem(languageKey, currentLanguage);
   applyLanguage();
+});
+
+Object.entries(priorityRuleInputs).forEach(([priority, input]) => {
+  input.addEventListener("input", () => {
+    priorityRules = { ...priorityRules, [priority]: input.value.trim() };
+    savePriorityRules();
+    renderTasks();
+  });
 });
 
 timerToggle.addEventListener("click", () => {

@@ -408,6 +408,37 @@ h2 {
   gap: 14px;
 }
 
+.priority-settings {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.mini-heading h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  line-height: 1.2;
+}
+
+.mini-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.priority-rule {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.priority-rule input {
+  min-height: 42px;
+}
+
 label {
   display: grid;
   gap: 8px;
