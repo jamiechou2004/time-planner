@@ -150,6 +150,13 @@
               <button class="mode" data-minutes="45" type="button">45</button>
               <button class="mode" data-minutes="60" type="button">60</button>
             </div>
+            <form class="custom-timer" id="customTimerForm">
+              <label>
+                <span data-i18n="customTimerLabel">自定义分钟数</span>
+                <input id="customTimerMinutes" type="number" min="1" max="180" step="1" value="30" />
+              </label>
+              <button class="primary-button" type="submit" data-i18n="applyTimer">应用</button>
+            </form>
           </aside>
         </section>
       </main>

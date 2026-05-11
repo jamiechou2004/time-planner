@@ -33,6 +33,10 @@ const translations = {
     startTimer: "开始",
     pauseTimer: "暂停",
     resetTimer: "重置",
+    customTimerLabel: "自定义分钟数",
+    applyTimer: "应用",
+    customMode: "自定义",
+    invalidTimer: "请输入 1 到 180 之间的分钟数。",
     emptyTimeline: "今天还没有计划。先添加一个时间块。",
     taskCount: (count) => `${count} 项`,
     minutes: (count) => `${count} 分钟`,
@@ -78,6 +82,10 @@ const translations = {
     startTimer: "Start",
     pauseTimer: "Pause",
     resetTimer: "Reset",
+    customTimerLabel: "Custom minutes",
+    applyTimer: "Apply",
+    customMode: "Custom",
+    invalidTimer: "Enter a duration from 1 to 180 minutes.",
     emptyTimeline: "No plan yet. Add a time block to start.",
     taskCount: (count) => `${count} ${count === 1 ? "item" : "items"}`,
     minutes: (count) => `${count} min`,
@@ -133,6 +141,8 @@ const timerText = document.querySelector("#timerText");
 const timerToggle = document.querySelector("#timerToggle");
 const timerReset = document.querySelector("#timerReset");
 const langToggle = document.querySelector("#langToggle");
+const customTimerForm = document.querySelector("#customTimerForm");
+const customTimerMinutes = document.querySelector("#customTimerMinutes");
 
 function text(key) {
   return translations[currentLanguage][key];
@@ -282,6 +292,14 @@ function renderTimer() {
   document.querySelector(".timer").style.setProperty("--timer-angle", `${progress}%`);
 }
 
+function setTimerDuration(minutes) {
+  timerMinutes = minutes;
+  timerTotal = timerMinutes * 60;
+  timerRemaining = timerTotal;
+  stopTimer();
+  renderTimer();
+}
+
 function stopTimer() {
   clearInterval(timerId);
   timerId = null;
@@ -396,12 +414,21 @@ document.querySelectorAll(".mode").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".mode").forEach((item) => item.classList.remove("is-active"));
     button.classList.add("is-active");
-    timerMinutes = Number(button.dataset.minutes);
-    timerTotal = timerMinutes * 60;
-    timerRemaining = timerTotal;
-    stopTimer();
-    renderTimer();
+    setTimerDuration(Number(button.dataset.minutes));
   });
+});
+
+customTimerForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const minutes = Number(customTimerMinutes.value);
+
+  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 180) {
+    alert(text("invalidTimer"));
+    return;
+  }
+
+  document.querySelectorAll(".mode").forEach((item) => item.classList.remove("is-active"));
+  setTimerDuration(minutes);
 });
 
 if (localStorage.getItem("apple-time-planner.theme") === "dark") {

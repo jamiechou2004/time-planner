@@ -608,6 +608,22 @@ select:focus {
   color: var(--text);
 }
 
+.custom-timer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin-top: 16px;
+}
+
+.custom-timer .primary-button {
+  min-width: 84px;
+}
+
+.custom-timer input {
+  min-height: 44px;
+}
+
 @media (max-width: 980px) {
   .hero,
   .workspace {
@@ -665,5 +681,9 @@ select:focus {
 
   .task-actions {
     justify-content: flex-end;
+  }
+
+  .custom-timer {
+    grid-template-columns: 1fr;
   }
 }
